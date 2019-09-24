@@ -1,6 +1,13 @@
 
 
 def antipode(val, axis='longitude'):
+    """
+    Simple utility to calculate antipode, that is the opposite latitude or longitude.
+
+    :param val: latitude or longitude to calculate antipode
+    :param axis: either 'latitude' or 'longitude'. Default is 'longitude'
+    :return:
+    """
     if axis == 'latitude':
         return -val
     elif axis == 'longitude':
