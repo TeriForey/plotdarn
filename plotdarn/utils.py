@@ -1,3 +1,4 @@
+import pvlib
 
 
 def antipode(val, axis='longitude'):
@@ -17,3 +18,16 @@ def antipode(val, axis='longitude'):
         return opp
     else:
         raise ValueError("axis only accepts 'longitude' or 'latitude'")
+
+
+def sun_position(loc, dtime):
+    """
+    Utility to calculate the sun's position relative to a location and time. Will return the azimuth, that is the
+    degrees clockwise from North.
+
+    :param loc: location object
+    :param dtime: datetime
+    :return: azimuth
+    """
+    sun = pvlib.solarposition.get_solarposition(time=dtime, latitude=loc.lat, longitude=loc.lon)
+    return float(sun.azimuth)
