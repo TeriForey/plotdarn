@@ -1,6 +1,6 @@
 import pytest
 from datetime import datetime
-from plotdarn.utils import antipode, sun_position
+from plotdarn.utils import antipode, sun_position, sun_longitude
 from plotdarn.locations import north_pole, Location
 
 
@@ -62,3 +62,28 @@ def test_sun_position_not_a_loc():
     time = "2012-06-15 22:02Z"
     with pytest.raises(AttributeError):
         sun_position(loc, time)
+
+
+def test_sun_longitude():
+    time = datetime(year=2012, month=6, day=15, hour=22, minute=2)
+    assert sun_longitude(time) == -150.3343248158402
+
+
+def test_sun_longitude_midday():
+    time = datetime(year=2012, month=6, day=15, hour=12, minute=0)
+    lon = sun_longitude(time)
+    assert -1 <= lon <= 1
+    assert sun_longitude(time) == 0.1432130201462769
+
+
+def test_sun_longitude_midnight():
+    time = datetime(year=2012, month=6, day=15, hour=0, minute=0)
+    lon = sun_longitude(time)
+    assert lon >= 179 or lon <= -179
+    assert sun_longitude(time) == -179.88355840312767
+
+
+def test_sun_longitude_midday_leapyear():
+    time = datetime(year=2020, month=6, day=4, hour=12, minute=0)
+    lon = sun_longitude(time)
+    assert -1 <= lon <= 1
