@@ -1,6 +1,7 @@
 from .locations import Location
 from spacepy.coordinates import Coords
 from spacepy.time import Ticktock
+import numpy as np
 
 
 def convert_mag_single(loc, dtime):
@@ -19,3 +20,26 @@ def convert_mag_single(loc, dtime):
     newloc = Location(converted.data[0, 1], converted.data[0, 2])
     return newloc
 
+
+def convert_mag_arr(latitudes, longitudes, dtime):
+    """
+    Convert two arrays of latitudes and longitudes of geomagnetic coords in geodetic coords. Numpy array is returned
+    of lat, lon pairs, e.g. [[lat, lon], [lat, lon]]
+    :param latitudes: ndarray
+    :param longitudes: ndarray
+    :param dtime: datetime
+    :return: array with lat and lon in that order
+    """
+    if len(latitudes) != len(longitudes):
+        raise ValueError("Input latitude and longitude must be the same length!")
+    nvals = len(latitudes)
+    print(nvals)
+    data = np.array([np.ones(nvals), latitudes, longitudes])
+
+    times = [dtime for i in range(nvals)]
+
+    coords = Coords(data.T, 'MAG', 'sph')
+    coords.ticks = Ticktock(times, 'ISO')
+    converted = coords.convert('GDZ', 'sph')
+    print(converted)
+    return converted.data[:, [1, 2]]
