@@ -33,7 +33,6 @@ def convert_mag_arr(latitudes, longitudes, dtime):
     if len(latitudes) != len(longitudes):
         raise ValueError("Input latitude and longitude must be the same length!")
     nvals = len(latitudes)
-    print(nvals)
     data = np.array([np.ones(nvals), latitudes, longitudes])
 
     times = [dtime for i in range(nvals)]
@@ -41,5 +40,4 @@ def convert_mag_arr(latitudes, longitudes, dtime):
     coords = Coords(data.T, 'MAG', 'sph')
     coords.ticks = Ticktock(times, 'ISO')
     converted = coords.convert('GDZ', 'sph')
-    print(converted)
     return converted.data[:, [1, 2]]
