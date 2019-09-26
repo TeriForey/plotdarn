@@ -3,17 +3,22 @@
 """Console script for plotdarn."""
 import argparse
 import sys
+from .plotdarn import plot_superdarn, read_file
+import geoviews as gv
 
 
 def main():
     """Console script for plotdarn."""
     parser = argparse.ArgumentParser()
-    parser.add_argument('_', nargs='*')
+    parser.add_argument('file', help='SuperDarn file to plot')
     args = parser.parse_args()
 
-    print("Arguments: " + str(args._))
-    print("Replace this message by putting your code into "
-          "plotdarn.cli.main")
+    data = read_file(args.file)
+
+    gv.extension('bokeh')
+
+    plot_superdarn(data)
+
     return 0
 
 

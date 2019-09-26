@@ -11,7 +11,13 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ['numpy>=1.16', 'spacepy>=0.2', 'pvlib>=0.6', 'geoviews>=1.6']
+requirements = [
+    'numpy>=1.16',
+    'spacepy>=0.2',
+    'pvlib>=0.6',
+    'geoviews>=1.6',
+    'pydarn @ git+https://github.com/SuperDarn/pydarn@develop#egg=pydarn',
+]
 
 setup_requirements = ['pytest-runner', ]
 
