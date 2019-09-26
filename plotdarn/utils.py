@@ -136,7 +136,7 @@ def cross_dateline(array, close=False):
 def find_intermediate_point(loc1, loc2):
     """
     Calculate intermediate point between two locations using haversine and fraction distance
-    (0 is point a, 1 is point b)
+    (0 is point a, 1 is point b). Equation taken from https://www.movable-type.co.uk/scripts/latlong.html
     :param loc1:
     :param loc2:
     :return:
