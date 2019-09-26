@@ -109,7 +109,6 @@ def cross_dateline(array, close=False):
 
     cross_point_from_back = len(array) - cross_point
     rolled = np.roll(array, cross_point_from_back, 0)
-    print(rolled)
     test_again = np.absolute(np.diff(rolled[:, 1], axis=0))
     if (test_again > 180).any():
         return array
@@ -127,7 +126,6 @@ def cross_dateline(array, close=False):
         midpoint = find_intermediate_point(loc1, loc2)
         newstart = [[midpoint.lat, lon]]
         newend = [[midpoint.lat, -lon]]
-        print(newstart, newend)
 
         newarray = np.vstack([newstart, rolled, newend])
         return newarray
