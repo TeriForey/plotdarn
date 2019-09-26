@@ -1,5 +1,7 @@
 import pvlib
-from math import floor, sin, cos, pi, atan2, asin
+import numpy as np
+from .locations import Location
+from math import floor, sin, cos, pi, atan2, asin, radians, sqrt, degrees
 
 
 def antipode(val, axis='longitude'):
@@ -82,3 +84,98 @@ def sun_longitude(dtime):
     nrot = round(sbsllon / 360.)
     sbsllon = sbsllon - 360. * nrot
     return sbsllon
+
+
+def cross_dateline(array, close=False):
+    """
+    Function to re-order array of latitude and longitudes so that dateline cross isn't affected. This assumes that
+    input array is drawing a circular object and that therefore the start/end positions can be changed without
+    affecting the meaning!
+    If it cannot be resolved, i.e. after rolling there is still a longitude gap > 180 degrees, the original array will
+    be returned without any changes.
+    :param array: ndarray
+        Latitudes and longitudes in the form of [[lat, lon], [lat, lon]]
+    :param close: bool
+        Boolean as to whether the array should close up to dateline or not.
+    :return:
+    """
+
+    differences = np.absolute(np.diff(array[:, 1], axis=0))
+    if (differences > 180).any():
+        assert len(np.nonzero(differences > 180)) == 1
+        cross_point = np.nonzero(differences > 180)[0] + 1
+    else:
+        return array
+
+    cross_point_from_back = len(array) - cross_point
+    rolled = np.roll(array, cross_point_from_back, 0)
+    print(rolled)
+    test_again = np.absolute(np.diff(rolled[:, 1], axis=0))
+    if (test_again > 180).any():
+        return array
+
+    if close:
+        # Want to close the circle.
+        loc1 = Location(rolled[0, 0], rolled[0, 1])
+        loc2 = Location(rolled[-1, 0], rolled[-1, 1])
+
+        if loc1.lon < 0:
+            lon = -180
+        else:
+            lon = 180
+
+        midpoint = find_intermediate_point(loc1, loc2)
+        newstart = [[midpoint.lat, lon]]
+        newend = [[midpoint.lat, -lon]]
+        print(newstart, newend)
+
+        newarray = np.vstack([newstart, rolled, newend])
+        return newarray
+
+    return rolled
+
+
+def find_intermediate_point(loc1, loc2):
+    """
+    Calculate intermediate point between two locations using haversine and fraction distance
+    (0 is point a, 1 is point b)
+    :param loc1:
+    :param loc2:
+    :return:
+    """
+    d = haversine(loc1.lon, loc1.lat, loc2.lon, loc2.lat)
+    fraction = (1 / ((180 - abs(loc1.lon)) + (180 - abs(loc2.lon)))) * (180 - abs(loc1.lon))
+    angular_dist = d/6371e3  # this is c from haversine
+
+    lon1, lat1, lon2, lat2 = map(radians, [loc1.lon, loc1.lat, loc2.lon, loc2.lat])
+
+    a = sin((1-fraction) * angular_dist) / sin(angular_dist)
+    b = sin(fraction * angular_dist) / sin(angular_dist)
+    x = a * cos(lat1) * cos(lon1) + b * cos(lat2) * cos(lon2)
+    y = a * cos(lat1) * sin(lon1) + b * cos(lat2) * sin(lon2)
+    z = a * sin(lat1) + b * sin(lat2)
+
+    lat = atan2(z, sqrt(x ** 2 + y ** 2))
+    lon = atan2(y, x)
+
+    # convert back to decimal degrees
+    lat_deg, lon_deg = map(degrees, [lat, lon])
+
+    return Location(lat_deg, lon_deg)
+
+
+def haversine(lon1, lat1, lon2, lat2):
+    """
+    Calculate the great circle distance between two points
+    on the earth (specified in decimal degrees)
+    """
+    # convert decimal degrees to radians
+    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+
+    # haversine formula
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
+    c = 2 * atan2(sqrt(a), sqrt(1-a))
+    r = 6371e3  # Radius of earth in meters
+    return c * r
