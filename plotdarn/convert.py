@@ -72,6 +72,12 @@ def arr_geo_to_mag(latitudes, longitudes, dtime):
     return converted[0:2]
 
 
+def mlat_mlt_to_xy(mlat, mlt, minlat):
+    r = (90. - np.abs(mlat)) / (90. - minlat)
+    a = (np.array(mlt) - 6.) / 12. * np.pi
+    return r * np.cos(a), r * np.sin(a)
+
+
 def _check_time(dtime):
     if isinstance(dtime, str):
         try:

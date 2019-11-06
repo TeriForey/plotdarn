@@ -1,79 +1,58 @@
 # -*- coding: utf-8 -*-
 
 """Plotting components"""
-import geoviews as gv
+from shapely.ops import linemerge, unary_union, polygonize
+from shapely.geometry import shape
 import numpy as np
-from .locations import north_pole
-from .convert import convert_mag_single, convert_mag_arr
-from plotdarn import utils
+from plotdarn import convert
+import aacgmv2
+from bokeh.models import ColumnDataSource, ColorBar
+from bokeh.palettes import Viridis11
+from bokeh.transform import log_cmap
 
 
-def plot_magnetic_north(dtime, col='green'):
+def coastlines(dtime, geometries, minlat=50):
     """
-    Will create the plotting component to plot the geomagnetic north pole
-    :param dtime: datetime
-    :param col: str color to plot point with
-    :return:
-    """
-    magnetic_north = convert_mag_single(north_pole, dtime)
-    return gv.Points((magnetic_north.lon, magnetic_north.lat)).opts(color=col, size=3)
-
-
-def plot_magnetic_longitudes(dtime):
-    """
-    Will create the plotting components for the longitudes 0, 45, 90, 135, 180 in both directions
+    Return the coastline geometries in a format suitable for plotting
     :param dtime:
+    :param geometries:
     :return:
     """
-    all_lons = None
-    longitudes = [-135, -90, -45, 0, 45, 90, 135, 180]
-    for lon in longitudes:
-        lat_array = np.arange(50, 80)
-        lon_array = np.full(lat_array.shape, lon)
+    xs = []
+    ys = []
 
-        converted = convert_mag_arr(lat_array, lon_array, dtime)
+    for geom in geometries:
+        if geom.area == 8900.069899944174 or geom.area == 4158.330801265312:
+            # Asia and America break so need to trim down before converting
+            line = shape({'type': 'LineString', 'coordinates': ((-180, 25), (180, 25))})
+            merged = linemerge([geom.exterior, line])
+            borders = unary_union(merged)
+            polygons = polygonize(borders)
+            geom = next(polygons)
 
-        path = gv.Points(converted[:, [1, 0]]).opts(color='grey', size=1)
-        if all_lons is None:
-            all_lons = path
-        else:
-            all_lons = all_lons * path
-    return all_lons
+        glat = np.array(geom.exterior.xy[1])
+        glon = np.array(geom.exterior.xy[0])
 
+        if glat.max() < 0:
+            continue
 
-def plot_magnetic_latitudes(dtime):
-    """
-    Will create the plotting components for the latitudes 80, 70, 60, 50
-    :param dtime:
-    :return:
-    """
-    all_lats = None
-    latitudes = [80, 70, 60, 50]
-    spacers = [6, 4, 3, 2]
-    for i, lat in enumerate(latitudes):
-        spacer = spacers[i]
-        lon_array = np.arange(-180, 180, spacer)
-        lat_array = np.full(lon_array.shape, lat)
-
-        converted = convert_mag_arr(lat_array, lon_array, dtime)
-
-        path = gv.Points(converted[:, [1, 0]]).opts(color='grey', size=1)
-        if all_lats is None:
-            all_lats = path
-        else:
-            all_lats = all_lats * path
-    return all_lats
+        converted = convert.arr_geo_to_mag(glat, glon, dtime)
+        mlts = aacgmv2.convert_mlt(converted[1], dtime, m2a=False)
+        x, y = convert.mlat_mlt_to_xy(converted[0], mlts, minlat)
+        xs.append(x)
+        ys.append(y)
+    return xs, ys
 
 
-def plot_boundary(dtime, boundary_lat, boundary_lon):
-    """
-    Plot the green boundary line
-    :param dtime:
-    :param boundary_lat:
-    :param boundary_lon:
-    :return:
-    """
-    boundary = convert_mag_arr(boundary_lat, boundary_lon, dtime)
-    boundary = utils.cross_dateline(boundary, close=True)
+def vector_points(dtime, mlat, mlon, mag, minlat=50):
+    mlts = aacgmv2.convert_mlt(mlon, dtime, m2a=False)
+    x, y = convert.mlat_mlt_to_xy(mlat, mlts, minlat)
+    mapper = log_cmap(field_name='m', palette=Viridis11, low=min(y), high=max(y))
+    source = ColumnDataSource(dict(x=x, y=y, m=mag))
+    return source, mapper
 
-    return gv.Path(boundary[:, [1, 0]]).opts(color='limegreen')
+
+def boundary(dtime, mlat, mlon, minlat=50):
+    mlts = aacgmv2.convert_mlt(mlon, dtime, m2a=False)
+    x, y = convert.mlat_mlt_to_xy(mlat, mlts, minlat)
+    return x, y

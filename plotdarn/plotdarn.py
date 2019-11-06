@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 
 """Main module."""
-import geoviews as gv
-import geoviews.feature as gf
-from geoviews import opts
 from datetime import datetime
-from cartopy import crs
 from plotdarn import plotting
+from bokeh.models import Range1d
+from bokeh.plotting import figure
 import pydarn
+import geopandas as gdp
 
 
 def read_file(filename):
@@ -22,23 +21,32 @@ def read_file(filename):
     return fitacf_data[0]
 
 
-def plot_superdarn(data):
+def read_coast(filename):
+    """
+    Read in a Shapefile and return a list of geometries
+    :param filename:
+    :return:
+    """
+    shp = gdp.read_file(filename)
+    return shp['geometry']
+
+
+def plot_superdarn(data, coastline_geoms):
     """
     Plot superDarn data using Bokeh
     :param data:
     :return: bokeh overlay
     """
     time = datetime(year=2012, month=6, day=15, hour=22, minute=2)
-    mag = plotting.plot_magnetic_north(time)
 
-    longs = plotting.plot_magnetic_longitudes(time)
-    lats = plotting.plot_magnetic_latitudes(time)
-    boundary = plotting.plot_boundary(time, data['boundary.mlat'], data['boundary.mlon'])
+    p = figure(plot_width=400, plot_height=400)
+    coastlines = plotting.coastlines(time, coastline_geoms)
+    p.multi_line(xs=coastlines[0], ys=coastlines[1], line_color='black')
+    points, mapper = plotting.vector_points(time, data['vector.mlat'], data['vector.mlon'], data['vector.vel.median'])
+    p.circle(x='x', y='y', source=points, size=2)
+    boundary = plotting.boundary(time, data['boundary.mlat'], data['boundary.mlon'])
+    p.line(x=boundary[0], y=boundary[1], line_color='lime')
+    p.x_range = Range1d(-1, 1)
+    p.y_range = Range1d(-1, 1)
 
-    features = gv.Overlay([gf.land, gf.borders, gf.coastline])
-
-    return (features * mag * longs * lats * boundary).opts(
-        opts.Points(
-            width=500, height=475, projection=crs.NorthPolarStereo()
-        )
-    )
+    return p
