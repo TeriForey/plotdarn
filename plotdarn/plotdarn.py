@@ -31,7 +31,7 @@ def read_coast(filename):
     return shp['geometry']
 
 
-def plot_superdarn(data, coastline_geoms):
+def plot_superdarn(data, coastline_geoms, title='SuperDarn'):
     """
     Plot superDarn data using Bokeh
     :param data:
@@ -40,7 +40,7 @@ def plot_superdarn(data, coastline_geoms):
     time = datetime(year=2012, month=6, day=15, hour=22, minute=2)
 
     # Create bokeh figure with no grid lines
-    p = figure()
+    p = figure(title=title)
     p.grid.grid_line_color = None
 
     # Add coastlines
