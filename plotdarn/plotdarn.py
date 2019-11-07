@@ -3,7 +3,7 @@
 """Main module."""
 from datetime import datetime
 from plotdarn import plotting
-from bokeh.models import Range1d
+from bokeh.models import Range1d, ColorBar
 from bokeh.plotting import figure
 import pydarn
 import geopandas as gdp
@@ -40,12 +40,12 @@ def plot_superdarn(data, coastline_geoms):
     time = datetime(year=2012, month=6, day=15, hour=22, minute=2)
 
     # Create bokeh figure with no grid lines
-    p = figure(plot_width=400, plot_height=400)
+    p = figure()
     p.grid.grid_line_color = None
 
     # Add coastlines
     coastlines = plotting.coastlines(time, coastline_geoms)
-    p.multi_line(xs=coastlines[0], ys=coastlines[1], line_color='black')
+    p.multi_line(xs=coastlines[0], ys=coastlines[1], line_color='grey')
 
     # Add our own MLT gridlines
     grid = plotting.gridlines()
@@ -57,7 +57,9 @@ def plot_superdarn(data, coastline_geoms):
 
     # Add the vector points
     points, mapper = plotting.vector_points(time, data['vector.mlat'], data['vector.mlon'], data['vector.vel.median'])
-    p.circle(x='x', y='y', source=points, size=2)
+    p.circle(x='x', y='y', color=mapper, source=points, size=2)
+    color_bar = ColorBar(color_mapper=mapper['transform'], width=8, location=(0, 0))
+    p.add_layout(color_bar, 'right')
 
     # Set the plot range
     p.x_range = Range1d(-1, 1)

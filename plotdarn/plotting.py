@@ -7,8 +7,8 @@ import numpy as np
 from plotdarn import convert
 import aacgmv2
 from bokeh.models import ColumnDataSource, ColorBar
-from bokeh.palettes import Viridis11
-from bokeh.transform import log_cmap
+from bokeh import palettes
+from bokeh.transform import linear_cmap
 
 
 def coastlines(dtime, geometries, minlat=50):
@@ -47,7 +47,7 @@ def coastlines(dtime, geometries, minlat=50):
 def vector_points(dtime, mlat, mlon, mag, minlat=50):
     mlts = aacgmv2.convert_mlt(mlon, dtime, m2a=False)
     x, y = convert.mlat_mlt_to_xy(mlat, mlts, minlat)
-    mapper = log_cmap(field_name='m', palette=Viridis11, low=min(y), high=max(y))
+    mapper = linear_cmap(field_name='m', palette=palettes.Viridis256, low=0, high=1000)
     source = ColumnDataSource(dict(x=x, y=y, m=mag))
     return source, mapper
 
