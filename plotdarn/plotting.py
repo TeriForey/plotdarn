@@ -44,6 +44,19 @@ def coastlines(dtime, geometries, minlat=50):
     return xs, ys
 
 
+def coastlines_from_mlat_mlon(dtime, mlats, mlons, minlat=50):
+    xs = []
+    ys = []
+
+    for i, mlat in enumerate(mlats):
+        mlon = mlons[i]
+        mlts = convert.mlon_to_mlt(mlon, dtime)
+        x, y = convert.mlat_mlt_to_xy(mlat, mlts, minlat)
+        xs.append(x)
+        ys.append(y)
+    return xs, ys
+
+
 def vector_points(dtime, mlat, mlon, mag, minlat=50):
     mlts = aacgmv2.convert_mlt(mlon, dtime, m2a=False)
     x, y = convert.mlat_mlt_to_xy(mlat, mlts, minlat)
