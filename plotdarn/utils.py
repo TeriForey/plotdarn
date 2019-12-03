@@ -186,5 +186,6 @@ def scale_velocity(vel, length=0.2):
     :param length: float
     :return:
     """
-
+    if not isinstance(vel, np.ndarray):
+        vel = np.array(vel)
     return vel * (length/1000)

@@ -169,5 +169,5 @@ def test_scale_vel_array():
 
 
 def test_scale_vel_list():
-    with pytest.raises(TypeError):
-        scale_velocity([1, 2, 3, 4])
+    res = scale_velocity([1, 2, 3, 4])
+    np.testing.assert_array_almost_equal(res, np.array([0.0002, 0.0004, 0.0006, 0.0008]))
