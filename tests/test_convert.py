@@ -171,3 +171,89 @@ def test_convert_array_g2m_np_input_shape():
     input_lon = np.array([[north_pole.lon], [north_pole.lon]])
     with pytest.raises(ValueError):
         convert.arr_geo_to_mag(input_lat, input_lon, time)
+
+
+def test_convert_angle_180():
+    x = 2
+    y = 2
+    angle = 180
+    res = convert.xy_angle_to_origin(x, y, angle)
+    assert res == 45
+
+
+def test_convert_angle_minus180():
+    res = convert.xy_angle_to_origin(2, 2, -180)
+    assert res == 45
+
+
+def test_convert_angle_1xy_180():
+    res = convert.xy_angle_to_origin(1, 1, 180)
+    assert res == 45
+
+
+def test_convert_angle_160():
+    res = convert.xy_angle_to_origin(2, 2, 160)
+    assert res == 65
+
+
+def test_convert_angle_minus160():
+    res = convert.xy_angle_to_origin(2, 2, -160)
+    assert res == 25
+
+
+def test_convert_angle_0():
+    res = convert.xy_angle_to_origin(2, 2, 0)
+    assert res == 225  # (180 + 45)
+
+
+def test_convert_left_quad_180():
+    res = convert.xy_angle_to_origin(-2, 2, 180)
+    assert res == 135  # 90 + 45
+
+
+def test_convert_left_quad_160():
+    res = convert.xy_angle_to_origin(-2, 2, 160)
+    assert res == 155  # 90 + 65
+
+
+def test_convert_bottom_left_quad_180():
+    res = convert.xy_angle_to_origin(-2, -2, 180)
+    assert res == 225  # 180 + 45
+
+
+def test_convert_bottom_left_quad_minus160():
+    res = convert.xy_angle_to_origin(-2, -2, -160)
+    assert res == 205  # 180 + 25
+
+
+def test_convert_bottom_left_quad_0():
+    res = convert.xy_angle_to_origin(-2, -2, 0)
+    assert res == 45
+
+
+def test_convert_bottom_right_quad_180():
+    res = convert.xy_angle_to_origin(2, -2, 180)
+    assert res == 315  # 180 + 90 + 45
+
+
+def test_convert_bottom_right_quad_160():
+    res = convert.xy_angle_to_origin(2, -2, 160)
+    assert res == 335  # 180 + 90 + 65
+
+
+def test_convert_bottom_right_quad_minus160():
+    res = convert.xy_angle_to_origin(2, -2, -160)
+    assert res == 295  # 180 + 90 + 25
+
+
+def test_convert_bottom_right_quad_0():
+    res = convert.xy_angle_to_origin(2, -2, 0)
+    assert res == 135  # 90 + 45
+
+
+def test_convert_angle_array():
+    x = np.array([2, 2, 1])
+    y = np.array([2, -2, 1])
+    angle = np.array([180, 180, 0])
+    res = convert.xy_angle_to_origin(x, y, angle)
+    np.testing.assert_array_almost_equal(res, np.array([45, 315, 225]))

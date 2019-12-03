@@ -82,6 +82,13 @@ def mlat_mlt_to_xy(mlat, mlt, minlat):
     return r * np.cos(a), r * np.sin(a)
 
 
+def xy_angle_to_origin(x, y, angle):
+    angle_from_origin = np.arctan2(y, x)
+    first_step = 180 - (180 - angle) - np.degrees(angle_from_origin)
+    result = (180 - first_step) % 360
+    return result
+
+
 def _check_time(dtime):
     if isinstance(dtime, str):
         try:
