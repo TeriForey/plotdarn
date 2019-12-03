@@ -83,6 +83,12 @@ def mlat_mlt_to_xy(mlat, mlt, minlat):
 
 
 def xy_angle_to_origin(x, y, angle):
+    if not isinstance(angle, np.ndarray):
+        angle = np.array(angle)
+    if not isinstance(x, np.ndarray):
+        x = np.array(x)
+    if not isinstance(y, np.ndarray):
+        y = np.array(y)
     angle_from_origin = np.arctan2(y, x)
     first_step = 180 - (180 - angle) - np.degrees(angle_from_origin)
     result = (180 - first_step) % 360
