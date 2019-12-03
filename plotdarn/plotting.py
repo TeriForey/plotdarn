@@ -9,6 +9,7 @@ import aacgmv2
 from bokeh.models import ColumnDataSource, ColorBar
 from bokeh import palettes
 from bokeh.transform import linear_cmap
+from .utils import scale_velocity
 
 
 def coastlines(dtime, geometries, minlat=50):
@@ -57,11 +58,11 @@ def coastlines_from_mlat_mlon(dtime, mlats, mlons, minlat=50):
     return xs, ys
 
 
-def vector_points(dtime, mlat, mlon, mag, minlat=50):
+def los_vector(dtime, mlat, mlon, mag, ang, minlat=50):
     mlts = aacgmv2.convert_mlt(mlon, dtime, m2a=False)
     x, y = convert.mlat_mlt_to_xy(mlat, mlts, minlat)
     mapper = linear_cmap(field_name='m', palette=palettes.Viridis256, low=0, high=1000)
-    source = ColumnDataSource(dict(x=x, y=y, m=mag))
+    source = ColumnDataSource(dict(x=x, y=y, m=mag, le=scale_velocity(mag), an=convert.xy_angle_to_origin(x, y, ang)))
     return source, mapper
 
 
