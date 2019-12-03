@@ -177,3 +177,14 @@ def haversine(lon1, lat1, lon2, lat2):
     c = 2 * atan2(sqrt(a), sqrt(1-a))
     r = 6371e3  # Radius of earth in meters
     return c * r
+
+
+def scale_velocity(vel, length=0.2):
+    """
+    Scale all velocities to a length on the graph (axis) that is 1000ms
+    :param vel: ndarray
+    :param length: float
+    :return:
+    """
+
+    return vel * (length/1000)

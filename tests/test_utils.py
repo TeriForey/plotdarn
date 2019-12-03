@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 from datetime import datetime
-from plotdarn.utils import antipode, sun_position, sun_longitude, cross_dateline
+from plotdarn.utils import antipode, sun_position, sun_longitude, cross_dateline, scale_velocity
 from plotdarn.locations import north_pole, Location
 
 
@@ -130,3 +130,44 @@ def test_cross_dateline_pos_first_closes():
     expected = np.array([[80.97848832236156, -180], [82, -173], [82, -101], [81, -40],
                          [80, 10], [80, 90], [80, 174], [80.97848832236156, 180]])
     np.testing.assert_array_equal(cross_dateline(array, close=True), expected)
+
+
+def test_scale_vel_1000():
+    res = scale_velocity(1000, 0.2)
+    assert res == 0.2
+
+
+def test_scale_vel_500():
+    res = scale_velocity(500, 0.2)
+    assert res == 0.1
+
+
+def test_scale_vel_2000():
+    res = scale_velocity(2000, 0.2)
+    assert res == 0.4
+
+
+def test_scale_vel_1():
+    res = scale_velocity(1, 0.2)
+    assert res == 0.0002
+
+
+def test_scale_vel_1_len3():
+    res = scale_velocity(1, 3)
+    assert res == 0.003
+
+
+def test_scale_vel_2_len3():
+    res = scale_velocity(2, 3)
+    assert res == 0.006
+
+
+def test_scale_vel_array():
+    res = scale_velocity(np.array([1, 2, 3, 5]))
+    print(res)
+    np.testing.assert_array_almost_equal(res, np.array([0.0002, 0.0004, 0.0006, 0.001]))
+
+
+def test_scale_vel_list():
+    with pytest.raises(TypeError):
+        scale_velocity([1, 2, 3, 4])
