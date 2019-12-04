@@ -18,6 +18,7 @@ requirements = [
     'matplotlib',
     'aacgmv2',
     'bokeh',
+    'shapely',
 ]
 
 setup_requirements = ['pytest-runner', ]
