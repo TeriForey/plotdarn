@@ -1,6 +1,4 @@
 from .locations import Location
-from spacepy.coordinates import Coords
-from spacepy.time import Ticktock
 import aacgmv2
 import datetime as dt
 import numpy as np

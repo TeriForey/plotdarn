@@ -4,7 +4,6 @@
 import argparse
 import sys
 from .plotdarn import plot_superdarn, read_file
-import geoviews as gv
 
 
 def main():
@@ -14,8 +13,6 @@ def main():
     args = parser.parse_args()
 
     data = read_file(args.file)
-
-    gv.extension('bokeh')
 
     plot_superdarn(data)
 

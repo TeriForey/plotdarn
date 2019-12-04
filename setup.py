@@ -13,10 +13,11 @@ with open('HISTORY.rst') as history_file:
 
 requirements = [
     'numpy>=1.16',
-    'spacepy>=0.2',
     'pvlib>=0.6',
-    'geoviews>=1.6',
     'pydarn @ git+https://github.com/SuperDarn/pydarn@develop#egg=pydarn',
+    'matplotlib',
+    'aacgmv2',
+    'bokeh',
 ]
 
 setup_requirements = ['pytest-runner', ]
