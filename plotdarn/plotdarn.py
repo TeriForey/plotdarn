@@ -56,10 +56,12 @@ def plot_superdarn(data, coastline_geoms, title='SuperDarn'):
     p.line(x=boundary[0], y=boundary[1], line_color='lime')
 
     # Add the vector points
-    points, mapper = plotting.los_vector(time, data['vector.mlat'], data['vector.mlon'], data['vector.vel.median'],
-                                         data['vector.kvect'])
-    p.ray(x='x', y='y', length='le', angle='an', angle_units='deg', color=mapper, source=points)
-    p.circle(x='x', y='y', color=mapper, source=points, size=2)
+    in_points, out_points, mapper = plotting.los_vector(time, data['vector.mlat'], data['vector.mlon'],
+                                                        data['vector.vel.median'], data['vector.kvect'], boundary)
+    p.ray(x='x', y='y', length='le', angle='an', angle_units='deg', color=mapper, source=in_points)
+    p.circle(x='x', y='y', color=mapper, source=in_points, size=2)
+    p.ray(x='x', y='y', length='le', angle='an', angle_units='deg', color='dimgrey', source=out_points)
+    p.circle(x='x', y='y', color='dimgrey', source=out_points, size=2)
     color_bar = ColorBar(color_mapper=mapper['transform'], width=8, location=(0, 0))
     p.add_layout(color_bar, 'right')
 

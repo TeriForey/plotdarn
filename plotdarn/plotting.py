@@ -9,7 +9,7 @@ import aacgmv2
 from bokeh.models import ColumnDataSource, ColorBar
 from bokeh import palettes
 from bokeh.transform import linear_cmap
-from .utils import scale_velocity
+from .utils import scale_velocity, points_inside_boundary
 
 
 def coastlines(dtime, geometries, minlat=50):
@@ -58,12 +58,19 @@ def coastlines_from_mlat_mlon(dtime, mlats, mlons, minlat=50):
     return xs, ys
 
 
-def los_vector(dtime, mlat, mlon, mag, ang, minlat=50):
+def los_vector(dtime, mlat, mlon, mag, ang, boundary, minlat=50):
     mlts = aacgmv2.convert_mlt(mlon, dtime, m2a=False)
     x, y = convert.mlat_mlt_to_xy(mlat, mlts, minlat)
+    inside = points_inside_boundary(x, y, boundary[0], boundary[1])
     mapper = linear_cmap(field_name='m', palette=palettes.Viridis256, low=0, high=1000)
-    source = ColumnDataSource(dict(x=x, y=y, m=mag, le=scale_velocity(mag), an=convert.xy_angle_to_origin(x, y, ang)))
-    return source, mapper
+    scaled_mag = scale_velocity(mag)
+    converted_angles = convert.xy_angle_to_origin(x, y, ang)
+    inside_source = ColumnDataSource(dict(x=x[inside], y=y[inside], m=mag[inside], le=scaled_mag[inside],
+                                          an=converted_angles[inside]))
+    outside = np.logical_not(inside)
+    outside_source = ColumnDataSource(dict(x=x[outside], y=y[outside], m=mag[outside], le=scaled_mag[outside],
+                                           an=converted_angles[outside]))
+    return inside_source, outside_source, mapper
 
 
 def boundary(dtime, mlat, mlon, minlat=50):
