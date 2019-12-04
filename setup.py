@@ -14,7 +14,7 @@ with open('HISTORY.rst') as history_file:
 requirements = [
     'numpy>=1.16',
     'pvlib>=0.6',
-    'pydarn',
+    'pydarn @ git+https://github.com/SuperDarn/pydarn@develop#egg=pydarn',
     'matplotlib',
     'aacgmv2',
     'bokeh',
@@ -23,10 +23,6 @@ requirements = [
 setup_requirements = ['pytest-runner', ]
 
 test_requirements = ['pytest>=3', ]
-
-dependency_links = [
-    'git+https://github.com/SuperDarn/pydarn@develop#egg=pydarn'
-]
 
 setup(
     author="Teri Forey",
@@ -51,7 +47,6 @@ setup(
         ],
     },
     install_requires=requirements,
-    dependency_links=dependency_links,
     license="MIT license",
     long_description=readme + '\n\n' + history,
     include_package_data=True,
