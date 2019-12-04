@@ -192,9 +192,9 @@ def scale_velocity(vel, length=0.2):
     return vel * (length/1000)
 
 
-def points_around_boundary(points_x, points_y, boundary_x, boundary_y, radius=0.0):
+def points_inside_boundary(points_x, points_y, boundary_x, boundary_y, radius=0.0):
     """
-    Takes in x, y of points and boundary and returns boolean array of inside and outside points.
+    Takes in x, y of points and boundary and returns boolean array of points inside boundary.
     :param points_x: ndarray or list
     :param points_y: ndarray or list
     :param boundary_x: ndarray or list
@@ -206,5 +206,4 @@ def points_around_boundary(points_x, points_y, boundary_x, boundary_y, radius=0.
     points = np.array([points_x, points_y]).T
     path = mpltPath.Path(poly)
     inside = path.contains_points(points, radius=radius)
-    outside = np.logical_not(inside)
-    return inside, outside
+    return inside
