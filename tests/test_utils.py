@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 from datetime import datetime
-from plotdarn.utils import antipode, sun_position, sun_longitude, cross_dateline, scale_velocity
+from plotdarn.utils import antipode, sun_position, sun_longitude, cross_dateline, scale_velocity, points_around_boundary
 from plotdarn.locations import north_pole, Location
 
 
@@ -171,3 +171,51 @@ def test_scale_vel_array():
 def test_scale_vel_list():
     res = scale_velocity([1, 2, 3, 4])
     np.testing.assert_array_almost_equal(res, np.array([0.0002, 0.0004, 0.0006, 0.0008]))
+
+
+def test_points_inside_simple_outside():
+    bx = [1, 2, 2, 1]
+    by = [1, 1, 2, 2]
+    inside, outside = points_around_boundary([0], [0], bx, by)
+    np.testing.assert_array_equal(inside, np.array([False]))
+    np.testing.assert_array_equal(outside, np.array([True]))
+
+
+def test_points_inside_simple_inside():
+    bx = [1, 2, 2, 1]
+    by = [1, 1, 2, 2]
+    inside, outside = points_around_boundary([1.5], [1.5], bx, by)
+    np.testing.assert_array_equal(inside, np.array([True]))
+    np.testing.assert_array_equal(outside, np.array([False]))
+
+
+def test_points_inside_border():
+    bx = [1, 2, 2, 1]
+    by = [1, 1, 2, 2]
+    inside, outside = points_around_boundary([1], [1], bx, by)
+    np.testing.assert_array_equal(inside, np.array([False]))
+    np.testing.assert_array_equal(outside, np.array([True]))
+
+
+def test_points_inside_border_radius():
+    bx = [1, 2, 2, 1]
+    by = [1, 1, 2, 2]
+    inside, outside = points_around_boundary([1], [1], bx, by, radius=0.1)
+    np.testing.assert_array_equal(inside, np.array([True]))
+    np.testing.assert_array_equal(outside, np.array([False]))
+
+
+def test_points_inside_mulitple():
+    bx = [1, 2, 2, 1]
+    by = [1, 1, 2, 2]
+    inside, outside = points_around_boundary([1.1, 2, 1.5, 1.2], [1.1, 2.1, 1.5, 3], bx, by)
+    np.testing.assert_array_equal(inside, np.array([True, False, True, False]))
+    np.testing.assert_array_equal(outside, np.array([False, True, False, True]))
+
+
+def test_points_inside_mulitple_array():
+    bx = np.array([1, 2, 2, 1])
+    by = np.array([1, 1, 2, 2])
+    inside, outside = points_around_boundary(np.array([1.1, 2, 1.5, 1.2]), np.array([1.1, 2.1, 1.5, 3]), bx, by)
+    np.testing.assert_array_equal(inside, np.array([True, False, True, False]))
+    np.testing.assert_array_equal(outside, np.array([False, True, False, True]))
