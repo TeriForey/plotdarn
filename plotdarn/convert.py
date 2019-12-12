@@ -74,8 +74,8 @@ def mlon_to_mlt(mlon, dtime):
     return aacgmv2.convert_mlt(mlon, dtime, m2a=False)
 
 
-def mlat_mlt_to_xy(mlat, mlt, minlat):
-    r = (90. - np.abs(mlat)) / (90. - minlat)
+def mlat_mlt_to_xy(mlat, mlt):
+    r = (90. - np.abs(mlat))
     a = (np.array(mlt) - 6.) / 12. * np.pi
     return r * np.cos(a), r * np.sin(a)
 

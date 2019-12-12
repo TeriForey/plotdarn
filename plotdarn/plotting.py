@@ -12,7 +12,7 @@ from bokeh.transform import linear_cmap
 from .utils import scale_velocity, points_inside_boundary
 
 
-def coastlines(dtime, geometries, minlat=50):
+def coastlines(dtime, geometries):
     """
     Return the coastline geometries in a format suitable for plotting
     :param dtime:
@@ -39,28 +39,28 @@ def coastlines(dtime, geometries, minlat=50):
 
         converted = convert.arr_geo_to_mag(glat, glon, dtime)
         mlts = aacgmv2.convert_mlt(converted[1], dtime, m2a=False)
-        x, y = convert.mlat_mlt_to_xy(converted[0], mlts, minlat)
+        x, y = convert.mlat_mlt_to_xy(converted[0], mlts)
         xs.append(x)
         ys.append(y)
     return xs, ys
 
 
-def coastlines_from_mlat_mlon(dtime, mlats, mlons, minlat=50):
+def coastlines_from_mlat_mlon(dtime, mlats, mlons):
     xs = []
     ys = []
 
     for i, mlat in enumerate(mlats):
         mlon = mlons[i]
         mlts = convert.mlon_to_mlt(mlon, dtime)
-        x, y = convert.mlat_mlt_to_xy(mlat, mlts, minlat)
+        x, y = convert.mlat_mlt_to_xy(mlat, mlts)
         xs.append(x)
         ys.append(y)
     return xs, ys
 
 
-def los_vector(dtime, mlat, mlon, mag, ang, boundary, minlat=50):
+def los_vector(dtime, mlat, mlon, mag, ang, boundary):
     mlts = aacgmv2.convert_mlt(mlon, dtime, m2a=False)
-    x, y = convert.mlat_mlt_to_xy(mlat, mlts, minlat)
+    x, y = convert.mlat_mlt_to_xy(mlat, mlts)
     inside = points_inside_boundary(x, y, boundary[0], boundary[1])
     mapper = linear_cmap(field_name='m', palette=palettes.Viridis256, low=0, high=1000)
     scaled_mag = scale_velocity(mag)
@@ -73,9 +73,9 @@ def los_vector(dtime, mlat, mlon, mag, ang, boundary, minlat=50):
     return inside_source, outside_source, mapper
 
 
-def boundary(dtime, mlat, mlon, minlat=50):
+def boundary(dtime, mlat, mlon):
     mlts = aacgmv2.convert_mlt(mlon, dtime, m2a=False)
-    x, y = convert.mlat_mlt_to_xy(mlat, mlts, minlat)
+    x, y = convert.mlat_mlt_to_xy(mlat, mlts)
     return x, y
 
 
@@ -104,7 +104,7 @@ def gridlines(minlat=50):
         converted_group_x = []
         converted_group_y = []
         for point in group:
-            x, y = convert.mlat_mlt_to_xy(point[0], point[1], minlat)
+            x, y = convert.mlat_mlt_to_xy(point[0], point[1])
             converted_group_x.append(x)
             converted_group_y.append(y)
         converted_lines_x.append(converted_group_x)

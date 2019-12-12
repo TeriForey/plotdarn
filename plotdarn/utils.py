@@ -180,7 +180,7 @@ def haversine(lon1, lat1, lon2, lat2):
     return c * r
 
 
-def scale_velocity(vel, length=0.2):
+def scale_velocity(vel, length=5):
     """
     Scale all velocities to a length on the graph (axis) that is 1000ms
     :param vel: ndarray

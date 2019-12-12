@@ -66,7 +66,7 @@ def plot_superdarn(data, coastline_geoms, title='SuperDarn'):
     p.add_layout(color_bar, 'right')
 
     # Set the plot range
-    p.x_range = Range1d(-1, 1)
-    p.y_range = Range1d(-1, 1)
+    p.x_range = Range1d(-40, 40)
+    p.y_range = Range1d(-40, 40)
 
     return p
