@@ -5,8 +5,7 @@ from shapely.ops import linemerge, unary_union, polygonize
 from shapely.geometry import shape
 import numpy as np
 from plotdarn import convert
-import aacgmv2
-from bokeh.models import ColumnDataSource, ColorBar
+from bokeh.models import ColumnDataSource
 from bokeh import palettes
 from bokeh.transform import linear_cmap
 from .utils import scale_velocity, points_inside_boundary
@@ -38,7 +37,7 @@ def coastlines(dtime, geometries):
             continue
 
         converted = convert.arr_geo_to_mag(glat, glon, dtime)
-        mlts = aacgmv2.convert_mlt(converted[1], dtime, m2a=False)
+        mlts = convert.mlon_to_mlt(converted[1], dtime)
         x, y = convert.mlat_mlt_to_xy(converted[0], mlts)
         xs.append(x)
         ys.append(y)
@@ -59,7 +58,7 @@ def coastlines_from_mlat_mlon(dtime, mlats, mlons):
 
 
 def los_vector(dtime, mlat, mlon, mag, ang, boundary):
-    mlts = aacgmv2.convert_mlt(mlon, dtime, m2a=False)
+    mlts = convert.mlon_to_mlt(mlon, dtime)
     x, y = convert.mlat_mlt_to_xy(mlat, mlts)
     inside = points_inside_boundary(x, y, boundary[0], boundary[1])
     mapper = linear_cmap(field_name='m', palette=palettes.Viridis256, low=0, high=1000)
@@ -74,7 +73,7 @@ def los_vector(dtime, mlat, mlon, mag, ang, boundary):
 
 
 def boundary(dtime, mlat, mlon):
-    mlts = aacgmv2.convert_mlt(mlon, dtime, m2a=False)
+    mlts = convert.mlon_to_mlt(mlon, dtime)
     x, y = convert.mlat_mlt_to_xy(mlat, mlts)
     return x, y
 
