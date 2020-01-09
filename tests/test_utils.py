@@ -164,13 +164,12 @@ def test_scale_vel_2_len3():
 
 def test_scale_vel_array():
     res = scale_velocity(np.array([1, 2, 3, 5]))
-    print(res)
-    np.testing.assert_array_almost_equal(res, np.array([0.0002, 0.0004, 0.0006, 0.001]))
+    np.testing.assert_array_almost_equal(res, np.array([0.005, 0.01, 0.015, 0.025]))
 
 
 def test_scale_vel_list():
     res = scale_velocity([1, 2, 3, 4])
-    np.testing.assert_array_almost_equal(res, np.array([0.0002, 0.0004, 0.0006, 0.0008]))
+    np.testing.assert_array_almost_equal(res, np.array([0.005, 0.01, 0.015, 0.02]))
 
 
 def test_points_inside_simple_outside():
