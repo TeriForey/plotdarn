@@ -14,7 +14,7 @@ with open('HISTORY.rst') as history_file:
 requirements = [
     'numpy>=1.16',
     'pvlib>=0.6',
-    'pydarn @ git+https://github.com/SuperDarn/pydarn@develop#egg=pydarn',
+    'pydarn @ git+https://github.com/SuperDarn/pydarn@1f68f47#egg=pydarn',
     'matplotlib',
     'aacgmv2==2.5.1',
     'bokeh',
