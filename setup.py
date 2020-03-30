@@ -16,7 +16,7 @@ requirements = [
     'pvlib>=0.6',
     'pydarn @ git+https://github.com/SuperDarn/pydarn@1f68f47#egg=pydarn',
     'matplotlib',
-    'aacgmv2==2.5.1',
+    'aacgmv2>=2.6',
     'bokeh',
     'shapely',
 ]

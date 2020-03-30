@@ -4,12 +4,17 @@ from plotdarn.locations import north_pole
 from datetime import datetime
 import numpy as np
 
+NP_GLAT = 82.82981033739065
+NP_GLON = -84.21565686001807
+NP_MLAT = 83.73564264222507
+NP_MLON = 169.7596236665287
+
 
 def test_convert_single():
     time = datetime(year=2012, month=6, day=15, hour=22, minute=2)
     newloc = convert.loc_mag_to_geo(north_pole, time)
-    assert newloc.lat == 82.828317505718
-    assert newloc.lon == -84.22458117342626
+    assert newloc.lat == NP_GLAT
+    assert newloc.lon == NP_GLON
 
 
 def test_convert_single_not_a_loc():
@@ -20,15 +25,15 @@ def test_convert_single_not_a_loc():
 def test_convert_single_not_a_datetime():
     time = "2012-06-15 22:02"
     res = convert.loc_mag_to_geo(north_pole, time)
-    assert res.lat == 82.828317505718
-    assert res.lon == -84.22458117342626
+    assert res.lat == NP_GLAT
+    assert res.lon == NP_GLON
 
 
 def test_convert_single_strdate_timezone():
     time = "2012-06-15 22:02Z"
     res = convert.loc_mag_to_geo(north_pole, time)
-    assert res.lat == 82.828317505718
-    assert res.lon == -84.22458117342626
+    assert res.lat == NP_GLAT
+    assert res.lon == NP_GLON
 
 
 def test_convert_single_unknown_date():
@@ -40,7 +45,7 @@ def test_convert_single_unknown_date():
 def test_convert_array():
     time = datetime(year=2012, month=6, day=15, hour=22, minute=2)
     res = convert.arr_mag_to_geo([north_pole.lat], [north_pole.lon], time)
-    np.testing.assert_array_equal(res, np.array([[82.828317505718], [-84.22458117342626]]))
+    np.testing.assert_array_equal(res, np.array([[NP_GLAT], [NP_GLON]]))
 
 
 def test_convert_array_2vals():
@@ -48,8 +53,8 @@ def test_convert_array_2vals():
     res = convert.arr_mag_to_geo([north_pole.lat, north_pole.lat], [north_pole.lon, north_pole.lon], time)
     expected = np.array(
         [
-            [82.828317505718, 82.828317505718],
-            [-84.22458117342626, -84.22458117342626]
+            [NP_GLAT, NP_GLAT],
+            [NP_GLON, NP_GLON]
         ]
     )
     np.testing.assert_array_equal(res, expected)
@@ -62,8 +67,8 @@ def test_convert_array_np_input():
     res = convert.arr_mag_to_geo(input_lat, input_lon, time)
     expected = np.array(
         [
-            [82.828317505718, 82.828317505718],
-            [-84.22458117342626, -84.22458117342626]
+            [NP_GLAT, NP_GLAT],
+            [NP_GLON, NP_GLON]
         ]
     )
     np.testing.assert_array_equal(res, expected)
@@ -92,8 +97,8 @@ def test_convert_array_np_input_shape():
 def test_convert_geo_to_mag_loc():
     time = datetime(year=2012, month=6, day=15, hour=22, minute=2)
     newloc = convert.loc_geo_to_mag(north_pole, time)
-    assert newloc.lat == 83.73468753767786
-    assert newloc.lon == 169.75505361684014
+    assert newloc.lat == NP_MLAT
+    assert newloc.lon == NP_MLON
 
 
 def test_convert_single_g2m_not_a_loc():
@@ -104,15 +109,15 @@ def test_convert_single_g2m_not_a_loc():
 def test_convert_single_g2m_not_a_datetime():
     time = "2012-06-15 22:02"
     res = convert.loc_geo_to_mag(north_pole, time)
-    assert res.lat == 83.73468753767786
-    assert res.lon == 169.75505361684014
+    assert res.lat == NP_MLAT
+    assert res.lon == NP_MLON
 
 
 def test_convert_single_g2m_strdate_timezone():
     time = "2012-06-15 22:02Z"
     res = convert.loc_geo_to_mag(north_pole, time)
-    assert res.lat == 83.73468753767786
-    assert res.lon == 169.75505361684014
+    assert res.lat == NP_MLAT
+    assert res.lon == NP_MLON
 
 
 def test_convert_single_g2m_unknown_date():
@@ -124,7 +129,7 @@ def test_convert_single_g2m_unknown_date():
 def test_convert_g2m_array():
     time = datetime(year=2012, month=6, day=15, hour=22, minute=2)
     res = convert.arr_geo_to_mag([north_pole.lat], [north_pole.lon], time)
-    np.testing.assert_array_equal(res, np.array([[83.73468753767786], [169.75505361684014]]))
+    np.testing.assert_array_equal(res, np.array([[NP_MLAT], [NP_MLON]]))
 
 
 def test_convert_array_g2m_2vals():
@@ -132,8 +137,8 @@ def test_convert_array_g2m_2vals():
     res = convert.arr_geo_to_mag([north_pole.lat, north_pole.lat], [north_pole.lon, north_pole.lon], time)
     expected = np.array(
         [
-            [83.73468753767786, 83.73468753767786],
-            [169.75505361684014, 169.75505361684014]
+            [NP_MLAT, NP_MLAT],
+            [NP_MLON, NP_MLON]
         ]
     )
     np.testing.assert_array_equal(res, expected)
@@ -146,8 +151,8 @@ def test_convert_array_g2m_np_input():
     res = convert.arr_geo_to_mag(input_lat, input_lon, time)
     expected = np.array(
         [
-            [83.73468753767786, 83.73468753767786],
-            [169.75505361684014, 169.75505361684014]
+            [NP_MLAT, NP_MLAT],
+            [NP_MLON, NP_MLON]
         ]
     )
     np.testing.assert_array_equal(res, expected)

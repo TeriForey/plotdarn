@@ -16,7 +16,7 @@ def loc_mag_to_geo(loc, dtime):
     """
     dtime = _check_time(dtime)
 
-    converted = aacgmv2.convert_latlon(loc.lat, loc.lon, 100, dtime, code='A2G')
+    converted = aacgmv2.convert_latlon(loc.lat, loc.lon, 100, dtime, method_code='A2G')
     newloc = Location(converted[0], converted[1])
     return newloc
 
@@ -33,7 +33,7 @@ def arr_mag_to_geo(latitudes, longitudes, dtime):
     dtime = _check_time(dtime)
     _check_arrays(latitudes, longitudes)
 
-    converted = aacgmv2.convert_latlon_arr(latitudes, longitudes, 100, dtime, code='A2G')
+    converted = aacgmv2.convert_latlon_arr(latitudes, longitudes, 100, dtime, method_code='A2G')
     return converted[0:2]
 
 
@@ -49,7 +49,7 @@ def loc_geo_to_mag(loc, dtime):
     """
     dtime = _check_time(dtime)
 
-    converted = aacgmv2.convert_latlon(loc.lat, loc.lon, 100, dtime, code='G2A')
+    converted = aacgmv2.convert_latlon(loc.lat, loc.lon, 100, dtime, method_code='G2A')
     newloc = Location(converted[0], converted[1])
     return newloc
 
@@ -66,7 +66,7 @@ def arr_geo_to_mag(latitudes, longitudes, dtime):
     dtime = _check_time(dtime)
     _check_arrays(latitudes, longitudes)
 
-    converted = aacgmv2.convert_latlon_arr(latitudes, longitudes, 100, dtime, code='G2A')
+    converted = aacgmv2.convert_latlon_arr(latitudes, longitudes, 100, dtime, method_code='G2A')
     return converted[0:2]
 
 
