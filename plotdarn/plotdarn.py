@@ -15,10 +15,9 @@ def read_file(filename):
     :param filename:
     :return: dictionary
     """
-    dmap = pydarn.DarnRead(filename)
-    fitacf_dmap = dmap.read_map()
-    fitacf_data = pydarn.dmap2dict(fitacf_dmap)
-    return fitacf_data[0]
+    reader = pydarn.SDarnRead(filename)
+    records = reader.read_map()
+    return records[0]
 
 
 def read_coast(filename):
