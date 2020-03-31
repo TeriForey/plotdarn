@@ -28,7 +28,9 @@ def coastlines(dtime, geometries):
             merged = linemerge([geom.exterior, line])
             borders = unary_union(merged)
             polygons = polygonize(borders)
-            geom = next(polygons)
+            for p in polygons:
+                if p.area == 2477.716653116975 or p.area == 6247.72291492699:
+                    geom = p
 
         glat = np.array(geom.exterior.xy[1])
         glon = np.array(geom.exterior.xy[0])
@@ -37,8 +39,15 @@ def coastlines(dtime, geometries):
             continue
 
         converted = convert.arr_geo_to_mag(glat, glon, dtime)
-        mlts = convert.mlon_to_mlt(converted[1], dtime)
-        x, y = convert.mlat_mlt_to_xy(converted[0], mlts)
+        mlat = converted[0]
+        mlon = converted[1]
+        if np.any(np.isnan(mlat)):
+            mask = np.ma.masked_invalid(converted)
+            mlat = mask[0][~mask.mask[0]]
+            mlon = mask[1][~mask.mask[1]]
+
+        mlts = convert.mlon_to_mlt(mlon, dtime)
+        x, y = convert.mlat_mlt_to_xy(mlat, mlts)
         xs.append(x)
         ys.append(y)
     return xs, ys
