@@ -74,10 +74,12 @@ def los_vector(dtime, mlat, mlon, mag, ang, boundary):
     scaled_mag = scale_velocity(mag)
     converted_angles = convert.xy_angle_to_origin(x, y, ang)
     inside_source = ColumnDataSource(dict(x=x[inside], y=y[inside], m=mag[inside], le=scaled_mag[inside],
-                                          an=converted_angles[inside]))
+                                          an=converted_angles[inside], mlon=mlon[inside], mlat=mlat[inside],
+                                          mlt=mlts[inside], ang=ang[inside]))
     outside = np.logical_not(inside)
     outside_source = ColumnDataSource(dict(x=x[outside], y=y[outside], m=mag[outside], le=scaled_mag[outside],
-                                           an=converted_angles[outside]))
+                                           an=converted_angles[outside], mlon=mlon[outside], mlat=mlat[outside],
+                                           mlt=mlts[outside], ang=ang[outside]))
     return inside_source, outside_source, mapper
 
 
