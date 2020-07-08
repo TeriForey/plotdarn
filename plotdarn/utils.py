@@ -11,7 +11,7 @@ def scale_velocity(vel, length=5):
     """
     if not isinstance(vel, np.ndarray):
         vel = np.array(vel)
-    return vel * (length/1000)
+    return vel * (length/1000) + 1e-10
 
 
 def points_inside_boundary(points_x, points_y, boundary_x, boundary_y, radius=0.0):
