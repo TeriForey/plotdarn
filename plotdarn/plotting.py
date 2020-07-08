@@ -9,6 +9,8 @@ from bokeh.models import ColumnDataSource
 from bokeh import palettes
 from bokeh.transform import linear_cmap
 from .utils import scale_velocity, points_inside_boundary
+from .fitted_vectors import sdarn_get_potential_grid, fitted_vecs
+from skimage import measure
 
 
 def coastlines(dtime, geometries):
@@ -66,7 +68,11 @@ def coastlines_from_mlat_mlon(dtime, mlats, mlons):
     return xs, ys
 
 
-def los_vector(dtime, mlat, mlon, mag, ang, boundary):
+def vector(dtime, mlat, mlon, boundary, latmin=50, coeffs=None, ang=None, mag=None, plottype='LOS'):
+    if plottype == 'FIT':
+        ang, mag = fitted_vecs(coeffs, mlat, mlon, dtime, latmin)
+        ang = np.array(ang)
+        mag = np.array(mag)
     mlts = convert.mlon_to_mlt(mlon, dtime)
     x, y = convert.mlat_mlt_to_xy(mlat, mlts)
     inside = points_inside_boundary(x, y, boundary[0], boundary[1])
@@ -120,3 +126,21 @@ def gridlines(minlat=50):
         converted_lines_x.append(converted_group_x)
         converted_lines_y.append(converted_group_y)
     return converted_lines_x, converted_lines_y
+
+
+def contours(coeffs, latmin=50):
+    pot = sdarn_get_potential_grid(coeffs, latmin) / 1.e3
+
+    xs = []
+    ys = []
+
+    levels = [-57.0000,-51.0000,-45.0000,-39.0000,-33.0000,-27.0000,-21.0000,-15.0000,-9.00000,-3.0000, 3.00000, 9.00000,15.0000,21.0000,27.0000,33.000,39.0000,45.0000,51.0000,57.0000]
+    for lev in levels:
+        lines = measure.find_contours(pot, lev)
+        for contour in lines:
+            x = contour[:, 1] - 39.5
+            y = contour[:, 0] - 39.5
+            xs.append(x)
+            ys.append(-y)
+
+    return xs, ys
