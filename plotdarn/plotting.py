@@ -128,15 +128,14 @@ def gridlines(minlat=50):
     return converted_lines_x, converted_lines_y
 
 
-def contours(coeffs, latmin=50):
-    pot = sdarn_get_potential_grid(coeffs, latmin) / 1.e3
-
+def contours(pot_grid):
+    print("POT")
     xs = []
     ys = []
 
     levels = [-57.0000,-51.0000,-45.0000,-39.0000,-33.0000,-27.0000,-21.0000,-15.0000,-9.00000,-3.0000, 3.00000, 9.00000,15.0000,21.0000,27.0000,33.000,39.0000,45.0000,51.0000,57.0000]
     for lev in levels:
-        lines = measure.find_contours(pot, lev)
+        lines = measure.find_contours(pot_grid, lev)
         for contour in lines:
             x = contour[:, 1] - 39.5
             y = contour[:, 0] - 39.5
