@@ -129,7 +129,6 @@ def gridlines(minlat=50):
 
 
 def contours(pot_grid):
-    print("POT")
     xs = []
     ys = []
 
