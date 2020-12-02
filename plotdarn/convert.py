@@ -80,6 +80,15 @@ def mlat_mlt_to_xy(mlat, mlt):
     return r * np.cos(a), r * np.sin(a)
 
 
+def xy_to_mlat_mlt(x, y):
+    x, y = np.array(x, ndmin=1), np.array(y, ndmin=1)
+    lat = 90 - np.sqrt(x**2 + y**2)
+    mlt = np.arctan2(y, x)*12/np.pi + 6
+    mlt[mlt < 0] += 24
+    mlt[mlt > 24] -= 24
+    return lat, mlt
+
+
 def xy_angle_to_origin(x, y, angle):
     if not isinstance(angle, np.ndarray):
         angle = np.array(angle)
